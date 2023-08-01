@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Agenda;
+use PHPUnit\Framework\MockObject\Stub\ReturnReference;
 
 class AgendaController extends Controller
 {
@@ -35,5 +36,9 @@ class AgendaController extends Controller
         ]);
 
         return response()->json('Agenda Successfully Updated');
+    }
+    public function removeAgenda($id){
+        Agenda::where('id', $id)->delete();
+        return response()->json('Agenda Successfully Deleted');
     }
 }

@@ -21,5 +21,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::post('storeAgenda', [AgendaController::class, 'storeAgenda']);
 Route::post('updateAgenda/{id}', [AgendaController::class, 'updateAgenda']);
+Route::post('removeAgenda/{id}', [AgendaController::class, 'removeAgenda']);
 Route::get('getAgenda', [AgendaController::class, 'getAgenda']);
 

@@ -28,7 +28,7 @@ import axios from 'axios';
                             <table class="table text-center">
                                 <thead>
                                 <tr>
-                                    <th>Agenda #</th>
+                                    <th>Agenda No.</th>
                                     <th>Title</th>
                                     <th>Message</th>
                                     <th>Type</th>
@@ -44,7 +44,8 @@ import axios from 'axios';
                                         <td>{{ item.type }}</td>
                                         <td>{{ item.author }}</td>
                                         <td>
-                                            <button @click="editAgenda(item)" class="btn btn-primary btn-sm">Edit</button>
+                                            <button @click="editAgenda(item)" class="btn btn-primary btn-sm mx-2">Edit</button>
+                                            <button @click="deleteAgenda(item)" class="btn btn-danger btn-sm mx-2">Delete</button>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -57,14 +58,15 @@ import axios from 'axios';
     
        <!--Modal for adding-->
         <div class="modal fade" id="agendaModal" tabindex="-1" aria-labelledby="agendaModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div :class="`modal-dialog modal-dialog-centered ${!deleteStatus ? 'modal-lg' : 'modal-sm'}`">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title fs-5" id="agendaModalLabel">{{ !editStatus ? 'Adding Agenda' : 'Updating Agenda' }}</h5>
+                        <h5 class="modal-title fs-5" id="agendaModalLabel" v-show="!deleteStatus">{{ !editStatus ? 'Adding Agenda' : 'Updating Agenda' }}</h5>
+                        <h5 class="modal-title fs-5" id="agendaModalLabel" v-show="deleteStatus">Delete Agenda</h5>
                         <button  class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <div class="row">
+                        <div class="row" v-show="!deleteStatus">
                             <form class="form-group" action="./api/storeAgenda" method="post" @submit.prevent="storeAgendaAgenda()">
                                 <div class="col-md-10">
                                     <div class="form-group">
@@ -92,10 +94,16 @@ import axios from 'axios';
                                 </div>
                               </form>  
                         </div>
+                         <h5 class="text-center" v-show="deleteStatus">Are you sure you want to delete this agenda?</h5>
                     </div> <!--end of modal body-->
-                    <div class="modal-footer">
+
+                    <div class="modal-footer" v-show="!deleteStatus">
                         <button  class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         <button @click="!editStatus ? storeAgenda() : updateAgenda()" class="btn btn-primary">{{ !editStatus ? 'Add' : 'Update' }}</button>
+                    </div>
+                    <div class="modal-footer" v-show="deleteStatus">
+                            <button  class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button @click="removeAgenda()" class="btn btn-danger">Delete</button>
                     </div>
                 </div>
             </div>
@@ -108,6 +116,7 @@ export default {
     data(){
         return{
             editStatus: false,
+            deleteStatus: false,
             taskData:{
                 id:'',
                 title:'',
@@ -130,6 +139,7 @@ export default {
             })
         },
         createAgenda(){
+            this.deleteStatus = false
             this.editStatus = false
             this.taskData = {
                 id: '',
@@ -152,6 +162,7 @@ export default {
         },
         editAgenda(item){
             this.editStatus = true
+            this.deleteStatus = false
             this.taskData = {
                 id: item.id,
                 title: item.title,
@@ -170,6 +181,21 @@ export default {
                 $('#agendaModal').modal('hide')
             }
             ) 
+        },
+        deleteAgenda(item){
+            this.deleteStatus = true
+            this.taskData.id = item.id
+            $('#agendaModal').modal('show')
+        },
+        removeAgenda(item){
+            axios.post('./api/removeAgenda/' + this.taskData.id).then(response => {
+                this.getAgenda()
+            }).catch(error => {
+                console.log(error)
+            }).finally(() => {
+                $('#agendaModal').modal('hide')
+            }
+            )
         }
     }
 };
