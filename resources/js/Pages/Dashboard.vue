@@ -43,7 +43,9 @@ import axios from 'axios';
                                         <td>{{ item.message.length <=20 ? item.message : item.message.subtr(0,20) + '...' }}</td>
                                         <td>{{ item.type }}</td>
                                         <td>{{ item.author }}</td>
-                                        <td></td>
+                                        <td>
+                                            <button @click="editAgenda(item)" class="btn btn-primary btn-sm">Edit</button>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -58,7 +60,7 @@ import axios from 'axios';
             <div class="modal-dialog modal-dialog-centered modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title fs-5" id="agendaModalLabel">Adding Agenda</h5>
+                        <h5 class="modal-title fs-5" id="agendaModalLabel">{{ !editStatus ? 'Adding Agenda' : 'Updating Agenda' }}</h5>
                         <button  class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -93,7 +95,7 @@ import axios from 'axios';
                     </div> <!--end of modal body-->
                     <div class="modal-footer">
                         <button  class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button @click="storeAgenda" class="btn btn-primary">Add</button>
+                        <button @click="!editStatus ? storeAgenda() : updateAgenda()" class="btn btn-primary">{{ !editStatus ? 'Add' : 'Update' }}</button>
                     </div>
                 </div>
             </div>
@@ -105,7 +107,9 @@ import axios from 'axios';
 export default {
     data(){
         return{
+            editStatus: false,
             taskData:{
+                id:'',
                 title:'',
                 message: '',
                 type: '',
@@ -126,7 +130,9 @@ export default {
             })
         },
         createAgenda(){
+            this.editStatus = false
             this.taskData = {
+                id: '',
                 title: '',
                 message: '',
                 type: '',
@@ -136,13 +142,34 @@ export default {
         },
         storeAgenda(){
             axios.post('./api/storeAgenda', this.taskData).then(response => {
-                console.log(response.data)
+                this.getAgenda()
             }).catch(error => {
                 console.log(error)
             }).finally(() => {
                 $('#agendaModal').modal('hide')
             }
             )
+        },
+        editAgenda(item){
+            this.editStatus = true
+            this.taskData = {
+                id: item.id,
+                title: item.title,
+                message: item.message,
+                type: item.type,
+                author: item.author,
+            }
+            $('#agendaModal').modal('show')
+        },
+        updateAgenda(item){
+           axios.post('./api/updateAgenda/' + this.taskData.id, this.taskData).then(response => {
+                this.getAgenda()
+            }).catch(error => {
+                console.log(error)
+            }).finally(() => {
+                $('#agendaModal').modal('hide')
+            }
+            ) 
         }
     }
 };

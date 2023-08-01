@@ -12,7 +12,7 @@ class AgendaController extends Controller
     {
         return response()->json(Agenda::latest()->get());
     }
-    
+
     public function storeAgenda(Request $request)
     {
         Agenda::create([
@@ -23,5 +23,17 @@ class AgendaController extends Controller
         ]);
 
         return response()->json('Agenda Successfully Created');
+    }
+
+    public function updateAgenda(Request $request, $id)
+    {
+        Agenda::where('id', $id)->update([
+            'title' => $request->title,
+            'message' => $request->message,
+            'type' => $request->type,
+            'author' => $request->author,
+        ]);
+
+        return response()->json('Agenda Successfully Updated');
     }
 }
