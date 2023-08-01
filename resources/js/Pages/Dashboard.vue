@@ -58,7 +58,7 @@ import axios from 'axios';
     
        <!--Modal for adding-->
         <div class="modal fade" id="agendaModal" tabindex="-1" aria-labelledby="agendaModalLabel" aria-hidden="true">
-            <div :class="`modal-dialog modal-dialog-centered ${!deleteStatus ? 'modal-lg' : 'modal-sm'}`">
+            <div :class="`modal-dialog modal-dialog-centered ${!deleteStatus ? 'modal-md' : 'modal-sm'}`">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title fs-5" id="agendaModalLabel" v-show="!deleteStatus">{{ !editStatus ? 'Adding Agenda' : 'Updating Agenda' }}</h5>
@@ -67,23 +67,29 @@ import axios from 'axios';
                     </div>
                     <div class="modal-body">
                         <div class="row" v-show="!deleteStatus">
-                            <form class="form-group" action="./api/storeAgenda" method="post" @submit.prevent="storeAgendaAgenda()">
-                                <div class="col-md-10">
-                                    <div class="form-group">
-                                        <label for="title">Title:</label>
-                                        <input type="text" class="form-control"  v-model="taskData.title" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-10">
+                            <div class="col-12 col-lg-12">
+                                <form class="form-group" action="./api/storeAgenda" method="post" @submit.prevent="storeAgendaAgenda()">
+                                
+                                    <div class="col-12 col-lg-12">
                                         <div class="form-group">
-                                            <label for="message">Message:</label>
-                                            <input type="text" class="form-control" v-model="taskData.message" required>
+                                            <label for="title">Title:</label>
+                                            <input type="text" class="form-control"  v-model="taskData.title" required>
                                         </div>
-                                </div>
-                                <div class="col-md-10">
+                                    </div>
+                                    <div class="col-12 col-lg-12">
+                                            <div class="form-group">
+                                                <label for="message">Message:</label>
+                                                <input type="text" class="form-control" v-model="taskData.message" required>
+                                            </div>
+                                    </div>
+                                <div class="col-12 col-lg-12">
                                         <div class="form-group">
-                                            <label for="type">Type:</label>
-                                            <input type="text" class="form-control" v-model="taskData.type" required>
+                                            <label for="type">Type: </label>
+                                             <select class="select floating col-12 col-lg-12" name="type" v-model="taskData.type">
+                                                <option value="News">News</option>
+                                                <option value="Update">Update</option>
+                                                <option value="Task">Task</option>
+                                            </select>
                                         </div>
                                 </div>
                                 <div class="col-md-10">
@@ -92,15 +98,22 @@ import axios from 'axios';
                                             <input type="text" class="form-control" v-model="taskData.author" required>
                                         </div>
                                 </div>
-                              </form>  
+                                </form>  
+                            </div>
                         </div>
+
+                        <!--Show if delete is performed-->
                          <h5 class="text-center" v-show="deleteStatus">Are you sure you want to delete this agenda?</h5>
+                         
                     </div> <!--end of modal body-->
 
+                      <!--Show if delete button is not clicked-->
                     <div class="modal-footer" v-show="!deleteStatus">
                         <button  class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         <button @click="!editStatus ? storeAgenda() : updateAgenda()" class="btn btn-primary">{{ !editStatus ? 'Add' : 'Update' }}</button>
                     </div>
+
+                    <!--Show if delete button is clicked-->
                     <div class="modal-footer" v-show="deleteStatus">
                             <button  class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                             <button @click="removeAgenda()" class="btn btn-danger">Delete</button>
@@ -111,6 +124,7 @@ import axios from 'axios';
     </AuthenticatedLayout>
 </template>
 
+<!--All methods used-->
 <script>
 export default {
     data(){
