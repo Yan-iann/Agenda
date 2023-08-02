@@ -11,7 +11,7 @@ class AgendaController extends Controller
 {
     public function getAgenda()
     {
-        return response()->json(Agenda::latest()->get());
+        return response()->json(Agenda::get());
     }
 
     public function storeAgenda(Request $request)

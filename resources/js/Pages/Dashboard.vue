@@ -12,6 +12,8 @@ import axios from 'axios';
     <AuthenticatedLayout>
        <div class="row justify-content-center mx-auto">
             <div class="col-md-8 py-4">
+                <div id="alert" class="alert alert-warning alert-dismissable fade show" v-show="crudStatus != '' && !deleteStatus && !deleteDB">{{ crudStatus }}</div>
+                 <div class="alert alert-warning alert-dismissable fade show" v-show="crudStatus != '' && deleteStatus && deleteDB">{{ crudStatus }}</div>
                 <div class="card">
                     <div class="card-header bg-white overflow-hidden shadow-m sm:rounded-lg">
                         <div class="row">
@@ -126,11 +128,15 @@ import axios from 'axios';
 
 <!--All methods used-->
 <script>
+
 export default {
+    
     data(){
         return{
             editStatus: false,
             deleteStatus: false,
+            deleteDB: false,
+            crudStatus: '',
             taskData:{
                 id:'',
                 title:'',
@@ -153,8 +159,10 @@ export default {
             })
         },
         createAgenda(){
+            
             this.deleteStatus = false
             this.editStatus = false
+            this.deleteDB = false
             this.taskData = {
                 id: '',
                 title: '',
@@ -167,16 +175,19 @@ export default {
         storeAgenda(){
             axios.post('./api/storeAgenda', this.taskData).then(response => {
                 this.getAgenda()
+                this.crudStatus = 'Agenda Successfully Created'
             }).catch(error => {
-                console.log(error)
+                 this.crudStatus = 'Please fill up all the inputs'
             }).finally(() => {
                 $('#agendaModal').modal('hide')
+                
             }
             )
         },
         editAgenda(item){
             this.editStatus = true
             this.deleteStatus = false
+            this.deleteDB = false
             this.taskData = {
                 id: item.id,
                 title: item.title,
@@ -189,6 +200,7 @@ export default {
         updateAgenda(item){
            axios.post('./api/updateAgenda/' + this.taskData.id, this.taskData).then(response => {
                 this.getAgenda()
+                this.crudStatus = 'Agenda Successfully Updated'
             }).catch(error => {
                 console.log(error)
             }).finally(() => {
@@ -204,13 +216,15 @@ export default {
         removeAgenda(item){
             axios.post('./api/removeAgenda/' + this.taskData.id).then(response => {
                 this.getAgenda()
+                this.crudStatus = 'Agenda Successfully Deleted'
+                this.deleteDB = true
             }).catch(error => {
                 console.log(error)
             }).finally(() => {
                 $('#agendaModal').modal('hide')
             }
             )
-        }
+        },
     }
 };
 </script>
