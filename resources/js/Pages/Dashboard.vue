@@ -18,7 +18,7 @@ import axios from 'axios';
                     <div class="card-header bg-white overflow-hidden shadow-m sm:rounded-lg">
                         <div class="row">
                             <div class="col-md-6">
-                                  <h5 class="text-gray-900 float-start">Welcome To Agendas</h5>
+                                  <h5 class="text-4xl text-gray-900 float-start font-bold">Agendas</h5>
                             </div>
                             <div class="col-md-6">
                                 <button @click="createAgenda" class="btn btn-success btn-m float-right">Add Agenda</button>
